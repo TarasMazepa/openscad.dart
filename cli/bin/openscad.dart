@@ -8,6 +8,8 @@ void main(List<String> arguments) {
     Metadata.empty(),
     (a, b) => a + readMetadata(b),
   );
+  metadata.normalize();
+  metadata.flipHorizontally();
   metadata.calibrate(
     metadata.lines[0][0],
     metadata.lines[0][1],
@@ -72,13 +74,20 @@ void main(List<String> arguments) {
   }
 
   for (var quadrilateral in metadata.quadrilaterals) {
-    print(
-      'linear_extrude(height=2) polygon(points=[[${quadrilateral[0]},${quadrilateral[1]}],[${quadrilateral[2]},${quadrilateral[3]}],[${quadrilateral[4]},${quadrilateral[5]}],[${quadrilateral[6]},${quadrilateral[7]}]]);',
-    );
+    final q = outlineQuadrilateral(quadrilateral, -3.5);
 
-    final scaledQuadrilateral = outlineQuadrilateral(quadrilateral, 5);
-    print(
-      'linear_extrude(height=1) polygon(points=[[${scaledQuadrilateral[0]},${scaledQuadrilateral[1]}],[${scaledQuadrilateral[2]},${scaledQuadrilateral[3]}],[${scaledQuadrilateral[4]},${scaledQuadrilateral[5]}],[${scaledQuadrilateral[6]},${scaledQuadrilateral[7]}]]);',
-    );
+    print('''
+linear_extrude(height=1.8) minkowski() {
+  polygon(points=[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]);
+  circle(r = 2);
+};
+''');
+
+    print('''
+linear_extrude(height=0.9) minkowski() {
+  polygon(points=[[${quadrilateral[0]},${quadrilateral[1]}],[${quadrilateral[2]},${quadrilateral[3]}],[${quadrilateral[4]},${quadrilateral[5]}],[${quadrilateral[6]},${quadrilateral[7]}]]);
+  circle(r = 5);
+};
+''');
   }
 }

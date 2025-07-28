@@ -33,6 +33,47 @@ class Metadata {
     }
   }
 
+  void flipHorizontally() {
+    num maxX = quadrilaterals[0][0];
+    for (final quadrilateral in quadrilaterals) {
+      maxX = max(maxX, quadrilateral[0]);
+      maxX = max(maxX, quadrilateral[2]);
+      maxX = max(maxX, quadrilateral[4]);
+      maxX = max(maxX, quadrilateral[6]);
+    }
+    for (final quadrilateral in quadrilaterals) {
+      quadrilateral[0] = maxX - quadrilateral[0];
+      quadrilateral[2] = maxX - quadrilateral[2];
+      quadrilateral[4] = maxX - quadrilateral[4];
+      quadrilateral[6] = maxX - quadrilateral[6];
+    }
+  }
+
+  void normalize() {
+    num minX = quadrilaterals[0][0];
+    num minY = quadrilaterals[0][1];
+    for (final quadrilateral in quadrilaterals) {
+      minX = min(minX, quadrilateral[0]);
+      minX = min(minX, quadrilateral[2]);
+      minX = min(minX, quadrilateral[4]);
+      minX = min(minX, quadrilateral[6]);
+      minY = min(minY, quadrilateral[1]);
+      minY = min(minY, quadrilateral[3]);
+      minY = min(minY, quadrilateral[5]);
+      minY = min(minY, quadrilateral[7]);
+    }
+    for (final quadrilateral in quadrilaterals) {
+      quadrilateral[0] -= minX;
+      quadrilateral[2] -= minX;
+      quadrilateral[4] -= minX;
+      quadrilateral[6] -= minX;
+      quadrilateral[1] -= minY;
+      quadrilateral[3] -= minY;
+      quadrilateral[5] -= minY;
+      quadrilateral[7] -= minY;
+    }
+  }
+
   @override
   String toString() {
     return {'quadrilaterals': quadrilaterals, 'lines': lines}.toString();
