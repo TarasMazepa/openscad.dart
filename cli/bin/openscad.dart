@@ -78,7 +78,7 @@ void main(List<String> arguments) {
 
     final scaledQuadrilateral = outlineQuadrilateral(quadrilateral, 5);
     print(
-      'linear_extrude(height=1) polygon(points=[[${scaledQuadrilateral[0]},${scaledQuadrilateral[1]}],[${scaledQuadrilateral[2]},${scaledQuadrilateral[3]}],[${scaledQuadrilateral[4]},${scaledQuadrilateral[5]}],[${scaledQuadrilateral[6]},${scaledQuadrilateral[7]}]], center=true);',
+      'linear_extrude(height=1) polygon(points=[[${scaledQuadrilateral[0]},${scaledQuadrilateral[1]}],[${scaledQuadrilateral[2]},${scaledQuadrilateral[3]}],[${scaledQuadrilateral[4]},${scaledQuadrilateral[5]}],[${scaledQuadrilateral[6]},${scaledQuadrilateral[7]}]]);',
     );
   }
 }
