@@ -62,7 +62,7 @@ void main(List<String> arguments) {
               .withChildren(
                 metadata.quadrilaterals.map(
                   (q) =>
-                      SCAD.linearExtrude(2.2) +
+                      SCAD.linearExtrude(height: 2.2) +
                       SCAD.offset(r: 2.5) +
                       SCAD.offset(delta: -2.5) +
                       SCAD.polygon(
@@ -71,9 +71,9 @@ void main(List<String> arguments) {
                 ),
               )
               .withChild(
-                SCAD.linearExtrude(0.8) +
+                SCAD.linearExtrude(height: 0.8) +
                     SCAD.offset(r: 2) +
-                    SCAD.union().withChildren(
+                    SCAD.union().of(
                       metadata.quadrilaterals.map(
                         (q) =>
                             SCAD.offset(delta: 1) +
@@ -87,7 +87,7 @@ void main(List<String> arguments) {
         .withChildren(
           metadata.quadrilaterals.map((q) {
             final c = quadrilateralCentroid(q);
-            return SCAD.linearExtrude(2.2) +
+            return SCAD.linearExtrude(height: 2.2) +
                 SCAD.translate('[${c[0]}, ${c[1]}, 0]') +
                 SCAD.circle(4);
           }),

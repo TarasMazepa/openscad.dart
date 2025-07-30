@@ -28,7 +28,7 @@ class SCAD {
 
   SCAD.translate(String value) : this('translate', value: value);
 
-  SCAD.linearExtrude(num height)
+  SCAD.linearExtrude({required num height})
     : this('linear_extrude', params: {'height': height});
 
   SCAD.polygon(String points)
@@ -47,6 +47,10 @@ class SCAD {
   SCAD withChildren(Iterable<SCAD> children) {
     this.children.addAll(children);
     return this;
+  }
+
+  SCAD of(Iterable<SCAD> children) {
+    return withChildren(children);
   }
 
   StringBuffer buildString({StringBuffer? buffer, String indent = ""}) {
