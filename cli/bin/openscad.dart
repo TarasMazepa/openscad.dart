@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:openscad/metadata.dart';
 import 'package:openscad/read_metadata.dart';
+import 'package:openscad/scad.dart';
 
 void main(List<String> arguments) {
   final metadata = arguments.fold(
@@ -54,37 +53,44 @@ void main(List<String> arguments) {
     return [cx, cy];
   }
 
-  print('difference() {');
-  print('union() {');
-  for (var q in metadata.quadrilaterals) {
-    print('linear_extrude(height=2.2)');
-    print('offset(r=2.5) {');
-    print('offset(delta=-2.5) {');
-    print(
-      'polygon(points=[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]);',
-    );
-    print('}');
-    print('}');
-  }
-
-  print("linear_extrude(height=0.8)");
-  print("offset(r=2) {");
-  print("union() {");
-  for (var q in metadata.quadrilaterals) {
-    print('offset(delta=1)');
-    print(
-      'polygon(points=[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]);',
-    );
-  }
-  print("}");
-  print("}");
-  print("}");
-  for (var q in metadata.quadrilaterals) {
-    final c = quadrilateralCentroid(q);
-    print('linear_extrude(height=2.2)');
-    print('translate([${c[0]}, ${c[1]}, 0]) {');
-    print('circle(r=4);');
-    print('}');
-  }
-  print("}");
+  print(
+    SCAD
+        .difference()
+        .withChild(
+          SCAD
+              .union()
+              .withChildren(
+                metadata.quadrilaterals.map(
+                  (q) =>
+                      SCAD.linearExtrude(2.2) +
+                      SCAD.offset(r: 2.5) +
+                      SCAD.offset(delta: -2.5) +
+                      SCAD.polygon(
+                        '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
+                      ),
+                ),
+              )
+              .withChild(
+                SCAD.linearExtrude(0.8) +
+                    SCAD.offset(r: 2) +
+                    SCAD.union().withChildren(
+                      metadata.quadrilaterals.map(
+                        (q) =>
+                            SCAD.offset(delta: 1) +
+                            SCAD.polygon(
+                              '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
+                            ),
+                      ),
+                    ),
+              ),
+        )
+        .withChildren(
+          metadata.quadrilaterals.map((q) {
+            final c = quadrilateralCentroid(q);
+            return SCAD.linearExtrude(2.2) +
+                SCAD.translate('[${c[0]}, ${c[1]}, 0]') +
+                SCAD.circle(4);
+          }),
+        ),
+  );
 }
