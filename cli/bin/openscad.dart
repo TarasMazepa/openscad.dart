@@ -59,7 +59,7 @@ void main(List<String> arguments) {
         .withChild(
           SCAD
               .union()
-              .withChildren(
+              .of(
                 metadata.quadrilaterals.map(
                   (q) =>
                       SCAD.linearExtrude(height: 2.2) +
