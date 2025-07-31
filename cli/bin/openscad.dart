@@ -62,7 +62,7 @@ void main(List<String> arguments) {
               .of(
                 metadata.quadrilaterals.map(
                   (q) =>
-                      SCAD.linearExtrude(height: 2.2) +
+                      SCAD.linearExtrude(height: 4) +
                       SCAD.offset(r: 2.5) +
                       SCAD.offset(delta: -2.5) +
                       SCAD.polygon(
@@ -85,11 +85,64 @@ void main(List<String> arguments) {
               ),
         )
         .withChildren(
+          metadata.quadrilaterals.map(
+            (q) =>
+                SCAD.translate("[0,0,0]") +
+                SCAD.linearExtrude(height: 3) +
+                SCAD.offset(r: 1.8) +
+                SCAD.offset(delta: -2.5) +
+                SCAD.polygon(
+                  '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
+                ),
+          ),
+        )
+        .withChildren(
+          metadata.quadrilaterals.map(
+            (q) =>
+                SCAD.translate("[0,0,0]") +
+                SCAD.linearExtrude(height: 5) +
+                SCAD.offset(r: 1.1) +
+                SCAD.offset(delta: -2.5) +
+                SCAD.polygon(
+                  '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
+                ),
+          ),
+        ),
+  );
+  print(
+    SCAD
+        .difference()
+        .withChild(
+          SCAD
+              .union()
+              .of(
+                metadata.quadrilaterals.map(
+                  (q) =>
+                      SCAD.linearExtrude(height: 0.7) +
+                      SCAD.offset(r: 1.35) +
+                      SCAD.offset(delta: -2.5) +
+                      SCAD.polygon(
+                        '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
+                      ),
+                ),
+              )
+              .of(
+                metadata.quadrilaterals.map(
+                  (q) =>
+                      SCAD.linearExtrude(height: 4.3) +
+                      SCAD.offset(r: 0.8) +
+                      SCAD.offset(delta: -2.5) +
+                      SCAD.polygon(
+                        '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
+                      ),
+                ),
+              ),
+        )
+        .of(
           metadata.quadrilaterals.map((q) {
             final c = quadrilateralCentroid(q);
-            return SCAD.linearExtrude(height: 2.2) +
-                SCAD.translate('[${c[0]}, ${c[1]}, 0]') +
-                SCAD.circle(4);
+            return SCAD.translate('[${c[0]}, ${c[1]}, 0]') +
+                SCAD.cylinder(h: 3, r1: 3.5, r2: 0.5);
           }),
         ),
   );

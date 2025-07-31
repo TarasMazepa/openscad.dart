@@ -20,6 +20,9 @@ class SCAD {
 
   SCAD.circle(num r) : this('circle', params: {'r': r}, semicolon: true);
 
+  SCAD.cylinder({required num h, required num r1, required num r2})
+    : this('cylinder', params: {'h': h, 'r1': r1, 'r2': r2}, semicolon: true);
+
   SCAD.offset({num? r, num? delta})
     : this(
         'offset',
@@ -53,9 +56,13 @@ class SCAD {
     return withChildren(children);
   }
 
-  StringBuffer buildString({StringBuffer? buffer, String indent = ""}) {
+  StringBuffer buildString({
+    StringBuffer? buffer,
+    String indent = "",
+    bool newLine = false,
+  }) {
     buffer ??= StringBuffer();
-    buffer.write(indent);
+    if (newLine) buffer.write(indent);
     buffer.write(name);
     buffer.write('(');
     bool pastFirst = false;
@@ -78,7 +85,7 @@ class SCAD {
       final childIndent = "  $indent";
       for (final child in children) {
         buffer.writeln();
-        child.buildString(buffer: buffer, indent: childIndent);
+        child.buildString(buffer: buffer, indent: childIndent, newLine: true);
       }
       buffer.writeln();
       buffer.write(indent);
@@ -87,7 +94,7 @@ class SCAD {
       final childIndent = "  $indent";
       for (final child in children) {
         buffer.write(' ');
-        child.buildString(buffer: buffer, indent: childIndent);
+        child.buildString(buffer: buffer, indent: childIndent, newLine: false);
       }
     }
     if (semicolon) buffer.write(';');
