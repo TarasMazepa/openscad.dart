@@ -53,97 +53,120 @@ void main(List<String> arguments) {
     return [cx, cy];
   }
 
-  print(
-    SCAD
-        .difference()
-        .withChild(
-          SCAD
-              .union()
-              .of(
-                metadata.quadrilaterals.map(
-                  (q) =>
-                      SCAD.linearExtrude(height: 4) +
-                      SCAD.offset(r: 2.5) +
-                      SCAD.offset(delta: -2.5) +
-                      SCAD.polygon(
-                        '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
-                      ),
+  final num thinHeight = 1.3;
+  final num buttonHeight = thinHeight + 2.4;
+  final num caseHeight = thinHeight + 3.8;
+  final totalHeight = thinHeight + caseHeight;
+  final num tubeSize = 2.8;
+
+  final tubeToBases = [0.1, 0.125, 0.15, 0.175, 0.2, 0.225];
+  final baseToHoles = [0.5, 0.6, 0.7, 0.8];
+  final holeToButtons = [0.05, 0.075, 0.1, 0.125, 0.15, 0.175];
+
+  num getTubeToBases(int index) {
+    return tubeToBases[index % tubeToBases.length];
+  }
+
+  num getBaseToHoles(int index) {
+    return baseToHoles[(index ~/ tubeToBases.length) % baseToHoles.length];
+  }
+
+  num getHoleToButtons(int index) {
+    return holeToButtons[((index ~/ tubeToBases.length) ~/ baseToHoles.length) %
+        holeToButtons.length];
+  }
+
+  SCAD getBaseOffset(int index) {
+    return SCAD.offset(r: tubeSize - getTubeToBases(index));
+  }
+
+  SCAD getHoleOffset(int index) {
+    return SCAD.offset(r: tubeSize - getBaseToHoles(index));
+  }
+
+  SCAD getButtonOffset(int index) {
+    return SCAD.offset(r: tubeSize - getHoleToButtons(index));
+  }
+
+  void printForIndex(int index) {
+    print(
+      'for $index ${getTubeToBases(index)} ${getBaseToHoles(index)} ${getHoleToButtons(index)}',
+    );
+  }
+
+  for (final index in metadata.quadrilaterals.indexed) {
+    printForIndex(index.$1);
+  }
+
+  if (false)
+    print(
+      SCAD
+          .difference()
+          .withChild(
+            SCAD.linearExtrude(height: totalHeight) +
+                SCAD.offset(r: 5) +
+                SCAD.offset(delta: -5) +
+                SCAD.union().of(
+                  metadata.quadrilaterals.map(
+                    (q) =>
+                        SCAD.offset(delta: 2) +
+                        SCAD.polygon(
+                          '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
+                        ),
+                  ),
                 ),
-              )
-              .withChild(
-                SCAD.linearExtrude(height: 0.8) +
-                    SCAD.offset(r: 2) +
-                    SCAD.union().of(
-                      metadata.quadrilaterals.map(
-                        (q) =>
-                            SCAD.offset(delta: 1) +
-                            SCAD.polygon(
-                              '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
-                            ),
-                      ),
-                    ),
-              ),
-        )
-        .withChildren(
-          metadata.quadrilaterals.map(
-            (q) =>
-                SCAD.translate("[0,0,0]") +
-                SCAD.linearExtrude(height: 3) +
-                SCAD.offset(r: 1.8) +
-                SCAD.offset(delta: -2.5) +
-                SCAD.polygon(
-                  '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
-                ),
+          )
+          .withChildren(
+            metadata.quadrilaterals.indexed.map(
+              (q) =>
+                  SCAD.translate('[0,0,-1]') +
+                  SCAD.linearExtrude(height: totalHeight + 2) +
+                  getHoleOffset(q.$1) +
+                  SCAD.offset(delta: -2.5) +
+                  SCAD.polygon(
+                    '[[${q.$2[0]},${q.$2[1]}],[${q.$2[2]},${q.$2[3]}],[${q.$2[4]},${q.$2[5]}],[${q.$2[6]},${q.$2[7]}]]',
+                  ),
+            ),
+          )
+          .withChildren(
+            metadata.quadrilaterals.map(
+              (q) =>
+                  SCAD.translate('[0,0,-1]') +
+                  SCAD.linearExtrude(height: caseHeight + 1) +
+                  SCAD.offset(r: tubeSize) +
+                  SCAD.offset(delta: -2.5) +
+                  SCAD.polygon(
+                    '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
+                  ),
+            ),
           ),
-        )
-        .withChildren(
-          metadata.quadrilaterals.map(
-            (q) =>
-                SCAD.translate("[0,0,0]") +
-                SCAD.linearExtrude(height: 5) +
-                SCAD.offset(r: 1.1) +
-                SCAD.offset(delta: -2.5) +
-                SCAD.polygon(
-                  '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
-                ),
+    );
+
+  if (false)
+    print(
+      SCAD
+          .union()
+          .of(
+            metadata.quadrilaterals.indexed.map(
+              (q) =>
+                  SCAD.linearExtrude(height: thinHeight) +
+                  getBaseOffset(q.$1) +
+                  SCAD.offset(delta: -2.5) +
+                  SCAD.polygon(
+                    '[[${q.$2[0]},${q.$2[1]}],[${q.$2[2]},${q.$2[3]}],[${q.$2[4]},${q.$2[5]}],[${q.$2[6]},${q.$2[7]}]]',
+                  ),
+            ),
+          )
+          .of(
+            metadata.quadrilaterals.indexed.map(
+              (q) =>
+                  SCAD.linearExtrude(height: thinHeight + buttonHeight) +
+                  getButtonOffset(q.$1) +
+                  SCAD.offset(delta: -2.5) +
+                  SCAD.polygon(
+                    '[[${q.$2[0]},${q.$2[1]}],[${q.$2[2]},${q.$2[3]}],[${q.$2[4]},${q.$2[5]}],[${q.$2[6]},${q.$2[7]}]]',
+                  ),
+            ),
           ),
-        ),
-  );
-  print(
-    SCAD
-        .difference()
-        .withChild(
-          SCAD
-              .union()
-              .of(
-                metadata.quadrilaterals.map(
-                  (q) =>
-                      SCAD.linearExtrude(height: 0.7) +
-                      SCAD.offset(r: 1.35) +
-                      SCAD.offset(delta: -2.5) +
-                      SCAD.polygon(
-                        '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
-                      ),
-                ),
-              )
-              .of(
-                metadata.quadrilaterals.map(
-                  (q) =>
-                      SCAD.linearExtrude(height: 4.3) +
-                      SCAD.offset(r: 0.8) +
-                      SCAD.offset(delta: -2.5) +
-                      SCAD.polygon(
-                        '[[${q[0]},${q[1]}],[${q[2]},${q[3]}],[${q[4]},${q[5]}],[${q[6]},${q[7]}]]',
-                      ),
-                ),
-              ),
-        )
-        .of(
-          metadata.quadrilaterals.map((q) {
-            final c = quadrilateralCentroid(q);
-            return SCAD.translate('[${c[0]}, ${c[1]}, 0]') +
-                SCAD.cylinder(h: 3, r1: 3.5, r2: 0.5);
-          }),
-        ),
-  );
+    );
 }
