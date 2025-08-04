@@ -54,7 +54,7 @@ void main(List<String> arguments) {
   }
 
   final num thinHeight = 1.3;
-  final num buttonHeight = thinHeight + 2.4;
+  final num buttonHeight = thinHeight + 2.5;
   final num caseHeight = thinHeight + 3.8;
   final totalHeight = thinHeight + caseHeight;
   final num tubeSize = 2.8;
@@ -81,11 +81,11 @@ void main(List<String> arguments) {
   }
 
   SCAD getHoleOffset(int index) {
-    return SCAD.offset(r: tubeSize - getBaseToHoles(index));
+    return SCAD.offset(r: tubeSize - getTubeToBases(index) - getBaseToHoles(index));
   }
 
   SCAD getButtonOffset(int index) {
-    return SCAD.offset(r: tubeSize - getHoleToButtons(index));
+    return SCAD.offset(r: tubeSize - getTubeToBases(index) - getBaseToHoles(index) - getHoleToButtons(index));
   }
 
   void printForIndex(int index) {
