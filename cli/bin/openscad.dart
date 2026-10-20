@@ -81,11 +81,19 @@ void main(List<String> arguments) {
   }
 
   SCAD getHoleOffset(int index) {
-    return SCAD.offset(r: tubeSize - getTubeToBases(index) - getBaseToHoles(index));
+    return SCAD.offset(
+      r: tubeSize - getTubeToBases(index) - getBaseToHoles(index),
+    );
   }
 
   SCAD getButtonOffset(int index) {
-    return SCAD.offset(r: tubeSize - getTubeToBases(index) - getBaseToHoles(index) - getHoleToButtons(index));
+    return SCAD.offset(
+      r:
+          tubeSize -
+          getTubeToBases(index) -
+          getBaseToHoles(index) -
+          getHoleToButtons(index),
+    );
   }
 
   void printForIndex(int index) {
