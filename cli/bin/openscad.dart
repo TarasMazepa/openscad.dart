@@ -17,52 +17,13 @@ void main(List<String> arguments) {
     150,
   );
 
-  List<double> quadrilateralCentroid(List<num> q) {
-    final xs = <double>[
-      q[0].toDouble(),
-      q[2].toDouble(),
-      q[4].toDouble(),
-      q[6].toDouble(),
-    ];
-    final ys = <double>[
-      q[1].toDouble(),
-      q[3].toDouble(),
-      q[5].toDouble(),
-      q[7].toDouble(),
-    ];
-
-    double areaTwice = 0;
-    double cxTimes6A = 0;
-    double cyTimes6A = 0;
-
-    for (int i = 0; i < 4; i++) {
-      final int j = (i + 1) & 3;
-      final double cross = xs[i] * ys[j] - xs[j] * ys[i];
-      areaTwice += cross;
-      cxTimes6A += (xs[i] + xs[j]) * cross;
-      cyTimes6A += (ys[i] + ys[j]) * cross;
-    }
-
-    final double area = areaTwice / 2.0;
-    if (area == 0) {
-      throw StateError('Degenerate polygon: area is zero.');
-    }
-
-    final double cx = cxTimes6A / (3.0 * areaTwice);
-    final double cy = cyTimes6A / (3.0 * areaTwice);
-    return [cx, cy];
-  }
-
-  final num thinHeight = 1.3;
-  final num buttonHeight = thinHeight + 2.5;
-  final num caseHeight = thinHeight + 3.8;
+  final thinHeight = 1.3;
+  final caseHeight = thinHeight + 3.8;
   final totalHeight = thinHeight + caseHeight;
-  final num tubeSize = 2.8;
+  final tubeSize = 2.8;
 
   final tubeToBases = [0.125, 0.15, 0.175, 0.2];
   final baseToHoles = [0.5, 0.6];
-  final holeToButtons = [0.1, 0.125, 0.15, 0.175];
-
   num getTubeToBases(int index) {
     return tubeToBases[index % tubeToBases.length];
   }
@@ -71,41 +32,11 @@ void main(List<String> arguments) {
     return baseToHoles[(index ~/ tubeToBases.length) % baseToHoles.length];
   }
 
-  num getHoleToButtons(int index) {
-    return holeToButtons[((index ~/ tubeToBases.length) ~/ baseToHoles.length) %
-        holeToButtons.length];
-  }
-
-  SCAD getBaseOffset(int index) {
-    return SCAD.offset(r: tubeSize - getTubeToBases(index));
-  }
-
   SCAD getHoleOffset(int index) {
     return SCAD.offset(
       r: tubeSize - getTubeToBases(index) - getBaseToHoles(index),
     );
   }
-
-  SCAD getButtonOffset(int index) {
-    return SCAD.offset(
-      r:
-          tubeSize -
-          getTubeToBases(index) -
-          getBaseToHoles(index) -
-          getHoleToButtons(index),
-    );
-  }
-
-  void printForIndex(int index) {
-    print(
-      '$index ${getTubeToBases(index)} ${getBaseToHoles(index)} ${getHoleToButtons(index)}',
-    );
-  }
-
-  if (false)
-    for (final index in metadata.quadrilaterals.indexed) {
-      printForIndex(index.$1);
-    }
 
   // if (false)
   print(
@@ -150,32 +81,4 @@ void main(List<String> arguments) {
           ),
         ),
   );
-
-  if (false)
-    print(
-      SCAD
-          .union()
-          .of(
-            metadata.quadrilaterals.indexed.map(
-              (q) =>
-                  SCAD.linearExtrude(height: thinHeight) +
-                  getBaseOffset(q.$1) +
-                  SCAD.offset(delta: -2.5) +
-                  SCAD.polygon(
-                    '[[${q.$2[0]},${q.$2[1]}],[${q.$2[2]},${q.$2[3]}],[${q.$2[4]},${q.$2[5]}],[${q.$2[6]},${q.$2[7]}]]',
-                  ),
-            ),
-          )
-          .of(
-            metadata.quadrilaterals.indexed.map(
-              (q) =>
-                  SCAD.linearExtrude(height: thinHeight + buttonHeight) +
-                  getButtonOffset(q.$1) +
-                  SCAD.offset(delta: -2.5) +
-                  SCAD.polygon(
-                    '[[${q.$2[0]},${q.$2[1]}],[${q.$2[2]},${q.$2[3]}],[${q.$2[4]},${q.$2[5]}],[${q.$2[6]},${q.$2[7]}]]',
-                  ),
-            ),
-          ),
-    );
 }
