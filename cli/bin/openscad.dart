@@ -36,28 +36,28 @@ void main(List<String> arguments) {
     double cyTimes6A = 0;
 
     for (int i = 0; i < 4; i++) {
-      final int j = (i + 1) & 3;
-      final double cross = xs[i] * ys[j] - xs[j] * ys[i];
+      final j = (i + 1) & 3;
+      final cross = xs[i] * ys[j] - xs[j] * ys[i];
       areaTwice += cross;
       cxTimes6A += (xs[i] + xs[j]) * cross;
       cyTimes6A += (ys[i] + ys[j]) * cross;
     }
 
-    final double area = areaTwice / 2.0;
+    final area = areaTwice / 2.0;
     if (area == 0) {
       throw StateError('Degenerate polygon: area is zero.');
     }
 
-    final double cx = cxTimes6A / (3.0 * areaTwice);
-    final double cy = cyTimes6A / (3.0 * areaTwice);
+    final cx = cxTimes6A / (3.0 * areaTwice);
+    final cy = cyTimes6A / (3.0 * areaTwice);
     return [cx, cy];
   }
 
-  final num thinHeight = 1.3;
-  final num buttonHeight = thinHeight + 2.5;
-  final num caseHeight = thinHeight + 3.8;
+  final thinHeight = 1.3;
+  final buttonHeight = thinHeight + 2.5;
+  final caseHeight = thinHeight + 3.8;
   final totalHeight = thinHeight + caseHeight;
-  final num tubeSize = 2.8;
+  final tubeSize = 2.8;
 
   final tubeToBases = [0.125, 0.15, 0.175, 0.2];
   final baseToHoles = [0.5, 0.6];

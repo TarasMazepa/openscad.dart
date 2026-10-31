@@ -2,7 +2,7 @@ class SCAD {
   final String name;
   final String? value;
   final bool curlyBraces;
-  final List<SCAD> children = List.empty(growable: true);
+  final children = List<SCAD>.empty(growable: true);
   final Map<String, dynamic> params;
   final bool semicolon;
 
